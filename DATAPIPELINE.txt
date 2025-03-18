@@ -1,0 +1,102 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON_EXEC = 'C:\\Users\\PC\\AppData\\Local\\Programs\\Python\\Python312\\python.exe'
+        SCRIPT_PATH = 'D:\\dataops_certus'
+        LOG_PATH = 'D:\\dataops_certus\\logs'
+        SUMMARY_FILE = 'D:\\dataops_certus\\logs\\summary.txt' // Archivo de resumen
+    }
+
+    stages {
+        stage('Preparar') {
+            steps {
+                script {
+                    bat "if not exist \"${LOG_PATH}\" mkdir \"${LOG_PATH}\""
+                    bat "\"${PYTHON_EXEC}\" --version > \"${LOG_PATH}\\python_version.log\" 2>&1"
+                    echo "Versión de Python verificada. Logs guardados en ${LOG_PATH}\\python_version.log"
+                }
+            }
+        }
+
+        stage('READ') {
+            steps {
+                script {
+                    def logFile = "${LOG_PATH}\\read_stage.log"
+                    if (fileExists("${SCRIPT_PATH}\\data_read.py")) {
+                        bat "\"${PYTHON_EXEC}\" \"${SCRIPT_PATH}\\data_read.py\" > \"${logFile}\" 2>&1"
+                    } else {
+                        error "El archivo data_read.py no existe en ${SCRIPT_PATH}"
+                    }
+                }
+            }
+        }
+
+        stage('TRANSFORM') {
+            steps {
+                script {
+                    def logFile = "${LOG_PATH}\\transform_stage.log"
+                    if (fileExists("${SCRIPT_PATH}\\data_transform.py")) {
+                        bat "\"${PYTHON_EXEC}\" \"${SCRIPT_PATH}\\data_transform.py\" > \"${logFile}\" 2>&1"
+                    } else {
+                        error "El archivo data_transform.py no existe en ${SCRIPT_PATH}"
+                    }
+                }
+            }
+        }
+
+        stage('EXPORT') {
+            steps {
+                script {
+                    def logFile = "${LOG_PATH}\\export_stage.log"
+                    if (fileExists("${SCRIPT_PATH}\\data_export.py")) {
+                        bat "\"${PYTHON_EXEC}\" \"${SCRIPT_PATH}\\data_export.py\" > \"${logFile}\" 2>&1"
+                    } else {
+                        error "El archivo data_export.py no existe en ${SCRIPT_PATH}"
+                    }
+                }
+            }
+        }
+
+        stage('SUMMARY') {
+            steps {
+                script {
+                    def logFile = "${LOG_PATH}\\summary_stage.log"
+                    if (fileExists("${SCRIPT_PATH}\\data_summary.py")) {
+                        bat "\"${PYTHON_EXEC}\" \"${SCRIPT_PATH}\\data_summary.py\" > \"${logFile}\" 2>&1"
+                        if (!fileExists(SUMMARY_FILE)) {
+                            error "El archivo de resumen no se generó correctamente."
+                        }
+                    } else {
+                        error "El archivo data_summary.py no existe en ${SCRIPT_PATH}"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                def summaryContent = "No summary available."
+                if (fileExists(SUMMARY_FILE)) {
+                    summaryContent = readFile(SUMMARY_FILE)
+                }
+                mail to: 'paulefren16@gmail.com',
+                     subject: "Build ${currentBuild.fullDisplayName}",
+                     body: """
+                        <p>The build was <b>${currentBuild.result}</b>.</p>
+                        <p>Check console output at <a href=\"${env.BUILD_URL}\">${env.BUILD_URL}</a> to view the results.</p>
+                        <h3>Dataset Summary:</h3>
+                        <pre>${summaryContent}</pre>
+                        """,
+                     mimeType: 'text/html'
+            }
+        }
+        failure {
+            mail to: 'paulefren16@gmail.com',
+                 subject: "Failed Build ${currentBuild.fullDisplayName}",
+                 body: "The build FAILED: Check console output at ${env.BUILD_URL} to view the results."
+        }
+    }
+}

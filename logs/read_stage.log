@@ -1,0 +1,3 @@
+D:\dataops_certus\data_read.py:13: DtypeWarning: Columns (0,1,13) have mixed types. Specify dtype option on import or set low_memory=False.
+  data = pd.read_csv(archivo_txt, delimiter='|', encoding='utf-8')
+Datos leídos y guardados en D:\dataops_certus\clientes.csv

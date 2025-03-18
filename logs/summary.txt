@@ -1,0 +1,6 @@
+
+Dataset Summary:
+----------------
+- Número de filas: 23887
+- Número de columnas: 35
+- Columnas: ID_Cliente, ID_Documento, Fecha_Registro, Segmento, Tipo_Cliente, Nombre1, Nombre2, Apellido_Paterno, Apellido_Materno, Fecha_Nacimiento, Email, Telefono, Nombre_Contacto, Tipo_Documento, Numero_Documento, Direccion, Direccion_2, Distrito, Provincia, Departamento, Pais, 'Fuente, Fecha_Inicio, Fecha_Fin, Codigo_Producto, Producto, Modelo, IMEI, IMEI2, Contrato, Estado, Codigo_Transaccion, Sucursal, Codigo_Sucursal, Exonerado 
