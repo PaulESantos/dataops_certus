@@ -1,7 +1,7 @@
 # 📊 DataOps Certus - Gestión de Control de Versiones  
 
 ## 📝 Descripción del Proyecto  
-Este proyecto implementa un **pipeline de datos** con control de versiones utilizando **Git y GitHub**. Permite gestionar, procesar y analizar datos de clientes de manera eficiente, asegurando la trazabilidad de los cambios y facilitando la colaboración en equipo.  
+Este proyecto implementa un **pipeline de datos** con control de versiones utilizando **Git y GitHub**. Permite gestionar, procesar y analizar datos de clientes asegurados de manera eficiente, asegurando la trazabilidad de los cambios y facilitando la colaboración en equipo.  
 
 ## 📂 Estructura del Repositorio  
 ```bash
